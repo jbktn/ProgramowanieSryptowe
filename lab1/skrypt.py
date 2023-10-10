@@ -8,10 +8,21 @@ def display(args,show_index):
         for arg in args:
             print(f'{arg}')
 
+def run(moves, move_descriptions):
+    for i in range(len(moves)):
+        moves[i] = move_descriptions[moves[i]]
+    display(moves, False)
 
+move_descriptions = {
+        "f": "Zwierzak idzie do przodu",
+        "b": "Zwierzak idzie do tyłu",
+        "l": "Zwierzak skręca w lewo",
+        "r": "Zwierzak skręca w prawo"
+    }
+    
 if __name__ == "__main__":
-    arr = list(sys.argv[0:])
-    index=False
+    args = list(sys.argv[1:])
     print("System wystartował.")
-    display(arr, index)
+    display(args, False)
+    run(args, move_descriptions)
     print("System zakończył działanie.")
