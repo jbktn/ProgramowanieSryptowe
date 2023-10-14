@@ -1,0 +1,17 @@
+[
+    {
+        "number": 1,
+        "limit": 1,
+        "guests": []
+    },
+    {
+        "number": 2,
+        "limit": 3,
+        "guests": []
+    },
+    {
+        "number": 3,
+        "limit": 2,
+        "guests": []
+    }
+]
