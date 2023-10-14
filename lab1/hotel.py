@@ -9,8 +9,8 @@ def add(person, room_nr):
         if room["number"] == room_nr:
             if len(room["guests"]) < room["limit"]:
                 room["guests"].append(person)
-                return True
-    return False
+                print("operacja_udana")
+            print("pokoj_pelny")
 
 
 def clear():
@@ -41,10 +41,8 @@ if __name__ == "__main__":
     input = sys.argv[1:]
     
     for i in range(1, len(input) - 1, 2):
-        if add(sys.argv[i], int(sys.argv[i + 1])):
-            print("success")
-        else:
-            print("error")
+        add(sys.argv[i], int(sys.argv[i + 1])):
+
 
     with open("rooms.json", "w") as file:
         json.dump(data, file, indent = 4)
