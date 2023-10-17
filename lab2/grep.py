@@ -1,11 +1,21 @@
 import re
-import sys
 
-search_term = sys.argv[1]
-f = sys.argv[2]
+def grep(phrase, input_lines, case, word):
+    lines = input_lines.splitlines()
 
-for line in open(f, 'r'):
-    if re.search(search_term, line):
-        print(line)
-        if line == None:
-            print('no matches found')
+    if case == True & word == True:
+        for line in lines:
+            if re.search(r'\b'+phrase+r'\b', line, re.IGNORECASE):
+                print(line)
+    elif word == True:
+        for line in lines:
+            if re.search(r'\b'+phrase+r'\b', line):
+                print(line)
+    elif case == True:
+        for line in lines:
+            if re.search(phrase, line, re.IGNORECASE):
+                print(line)
+    else:
+        for line in lines:
+            if re.search(phrase, line):
+                print(line)
