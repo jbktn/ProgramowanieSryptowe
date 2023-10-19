@@ -11,4 +11,4 @@ def ops(x):
     print(operations.merge_characters_and_duplicate(x))
 
 if __name__ == "__main__":
-    operations(sys.argv[1])
+    ops(sys.argv[1])

@@ -1,7 +1,7 @@
 import sys
 import json
 
-with open("rooms.json", "r") as file:
+with open("file_name", "r") as file:
     data = json.load(file)
 
 def add(person, room_nr):
@@ -16,7 +16,7 @@ def add(person, room_nr):
 def clear():
     for room in data:
         room["guests"] = []
-    with open("rooms.json", "w") as file:
+    with open("file_name", "w") as file:
         json.dump(data, file, indent=4)
 
 
@@ -38,21 +38,8 @@ def print_rooms():
         print('')
 
 if __name__ == "__main__":
-    input = sys.argv[1:]
-    
-    for i in range(1, len(input) - 1, 2):
-        add(sys.argv[i], int(sys.argv[i + 1]))
+    file_name = sys.argv[1]
 
-
-    with open("rooms.json", "w") as file:
-        json.dump(data, file, indent = 4)
-
-    if sys.argv[-1] == "--stan_pokoi":
-        print_rooms()
-
-    if sys.argv[-1] == "--clear":
-        clear()
-    
-
-            
-            
+    lines = sys.stdin.read()
+    for line in lines:
+        

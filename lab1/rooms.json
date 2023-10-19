@@ -2,12 +2,16 @@
     {
         "number": 1,
         "limit": 1,
-        "guests": []
+        "guests": [
+            "kamil"
+        ]
     },
     {
         "number": 2,
         "limit": 3,
-        "guests": []
+        "guests": [
+            "tomasz"
+        ]
     },
     {
         "number": 3,
