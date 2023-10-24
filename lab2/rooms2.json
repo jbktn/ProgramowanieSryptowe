@@ -2,22 +2,19 @@
     {
         "number": 1,
         "limit": 1,
-        "guests": [
-            "kamil"
-        ]
+        "guests": [],
+        "terminy": []
     },
     {
         "number": 2,
         "limit": 3,
-        "guests": [
-            "tomasz"
-        ]
+        "guests": [],
+        "terminy": []
     },
     {
         "number": 3,
         "limit": 2,
-        "guests": [
-            "tom"
-        ]
+        "guests": [],
+        "terminy": []
     }
 ]
