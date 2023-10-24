@@ -8,7 +8,7 @@ class test_capture_stdout(unittest.TestCase):
         testargs = ["rooms2.json"]
         with patch.object(sys, 'argv', testargs):
             setup = get_setup_file()
-            assert setup == "/home/fenton/project/setup.py"
+            assert setup == "rooms2.jons"
 
 
 if __name__ == '__main__':
