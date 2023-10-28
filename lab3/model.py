@@ -7,9 +7,33 @@ class MoveDirection(Enum):
     right = 4
 
 class Vector2d:
-    def __init__(self, x, y):
-        self.__x = x
-        self.__y = y
+    def __init__(self, x1, y1):
+        self.__x = x1
+        self.__y = y1
+
+    @property
+    def x(self):
+        return self.__x
+    
+    @property
+    def y(self):
+        return self.__y
+    
+    @x.getter
+    def x(self):
+        return self.__x
+    
+    @y.getter
+    def y(self):
+        return self.__y
+    
+    @x.setter
+    def x(self, value):
+        self.__x = value
+
+    @y.setter
+    def y(self, value):
+        self.__y = value
 
     def get_x(self):
         return self.__x
