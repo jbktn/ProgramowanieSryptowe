@@ -20,6 +20,9 @@ class Vector2d:
 
     def __sub__(self, other):
         return Vector2d(self.x - other.x, self.y - other.y)
+    
+    def __hash__(self):
+        return hash(self.x)
 
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y
@@ -97,3 +100,6 @@ class Animal:
 
         if self.inMAP(new_position):
             self.position = new_position
+
+animals={Vector2d(0,0):"Zwierze 1", Vector2d(1,1):"Zwierze 2"}
+print(animals[Vector2d(0,0)])
