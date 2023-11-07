@@ -1,47 +1,63 @@
+import datetime
+
 class Room:
-    def __init__(self):
-        self.room_number = 1
-        self.room_capacity = 3
-        self.room_price = 200
+    guests_str = ""
+    def __init__(self, number, cena, max: int, current: int, guests) -> None:
+        self.number = number
+        self.cena = cena
+        self.max = max
+        self.current = current
+        self.guests = guests
 
-        self.current_occupancy = 0
-        self.guests = {}
+    def __repr__ (self):
+        return f"nr: {self.number} Aktualna liczba gosci: {self.current}"
 
-    def check_in(self, guest_name, checkin_date, checkout_date):
-        if self.current_occupancy < self.room_capacity:
-            self.current_occupancy += 1
-            self.guests[guest_name] = {'checkin_date': checkin_date, 'checkout_date': checkout_date}
-            print(f"{guest_name} zameldowany. Aktualna liczba osób: {self.current_occupancy}")
+    def __str__(self):
+        return f"Numer: {self.number}\nMaksymalna liczba osób: {self.max}\nAktualna liczba osób: {len(self.guests)}\nCena: {self.cena}"\
+if self.current == 0 else f"Numer: {self.number}\nMaksymalna liczba osób: {self.max}\nAktualna liczba osób: {len(self.guests)}\n\
+Cena: {self.cena}\nGoście:\n{self.guests_str}"
+    
+
+class Guest:
+    arr = 0
+    dep = 0
+    do_zaplaty = 0
+    reservations = []
+    def __init__(self, name):
+        self.name = name
+
+    def book(self, room, arrival, departure):
+        if room.current < room.max:
+            room.guests_str += f"   {self.name} {arrival} {departure}\n"
+            cena = (departure - arrival).days * room.cena
+            self.reservations.append({"room":room.number, "from":arrival, "to":departure, "price":cena})
+            room.current += 1
         else:
-            print("Pokój pełny. Nie można dokonać zameldowania.")
+            print("Err. Room is full")
+            
+    def __repr__(self):
+        return f"{self.name}"
 
-    def check_out(self, guest_name):
-        if guest_name in self.guests:
-            self.current_occupancy -= 1
-            checkout_date = self.guests[guest_name]['checkout_date']
-            print(f"{guest_name} wymeldowany. Data wymeldowania: {checkout_date}. Aktualna liczba osób: {self.current_occupancy}")
-            del self.guests[guest_name]
-        else:
-            print(f"{guest_name} nie jest zameldowany w pokoju.")
+    def __str__(self):
+        data = f"Imię: {self.name}\n"
+        for i in self.reservations:
+            data += f"Pokoj nr: {i['room']}   {i['from']}    {i['to']}\nDo zaplaty: {i['price']} zł\n"
+        return data
 
-'''
-if __name__ == "__main__":
-    # Tworzenie instancji klasy Room
-    room_instance = Room()
+list_of_rooms = [
+    Room(1, 100, 1, 0, []),
+    Room(2, 200, 2, 0, []),
+    Room(3, 300, 3, 0, [])
+    ]
 
-    # Wyświetlanie informacji o pokoju
-    print(f"Numer pokoju: {room_instance.room_number}")
-    print(f"Limit osób w pokoju: {room_instance.room_capacity}")
-    print(f"Aktualna liczba osób: {room_instance.current_occupancy}")
-    print(f"Cena pokoju: {room_instance.room_price}")
+list_of_guests = [Guest("Jan Kowalski"), Guest("Anna Kowalska"), Guest("Joanna Bielecka")] 
 
-    # Przykłady zameldowania i wymeldowania gości
-    room_instance.check_in("Gość1", "2023-10-25", "2023-10-28")
-    room_instance.check_in("Gość2", "2023-10-26", "2023-10-29")
-    room_instance.check_in("Gość3", "2023-10-27", "2023-10-30")
-
-    room_instance.check_out("Gość2")
-'''
+'''room = list_of_rooms[0]
+guest = list_of_guests[2]
+guest.book(room, datetime.date(2024, 1, 1), datetime.date(2024, 1, 3))
+guest = list_of_guests[0]
+guest.book(room, datetime.date(2024, 1, 1), datetime.date(2024, 1, 3))
+print(list_of_guests[0]) '''
 
 if __name__ == "__main__":
     while True:
@@ -54,11 +70,9 @@ if __name__ == "__main__":
                 elif commands[0] == "guests":
                     print(list_of_guests)
                 elif commands[0] == "guest":
-                    print(list_of_guests[commands[1]])
+                    print(list_of_guests[int(commands[1])])
                 elif commands[0] == "book":
-                    list_of_guests[commands[1]].book(list_of_rooms[commands[2]], datetime.strptime(commands[3],str), datetime.strptime(commands[4],str))
-                elif commands[0] == "clear":
-                    clear()
+                    list_of_guests[int(commands[1])].book(list_of_rooms[int(commands[2])], datetime.datetime.strptime(commands[3], "%d-%m-%Y"), datetime.datetime.strptime(commands[4], "%d-%m-%Y"))
                 else:
                     print("Nieznana komenda")
             except IndexError:
