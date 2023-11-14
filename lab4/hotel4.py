@@ -1,5 +1,7 @@
 import datetime
 
+
+
 class Room:
     guests_str = ""
     def __init__(self, number, cena, max: int, current: int, guests) -> None:
@@ -17,6 +19,14 @@ class Room:
 if self.current == 0 else f"Numer: {self.number}\nMaksymalna liczba osób: {self.max}\nAktualna liczba osób: {len(self.guests)}\n\
 Cena: {self.cena}\nGoście:\n{self.guests_str}"
     
+class Hotel:
+    list_of_rooms = [
+    Room(1, 100, 1, 0, []),
+    Room(2, 200, 2, 0, []),
+    Room(3, 300, 3, 0, [])
+    ]
+    def __init__(self, rooms: list_of_rooms) -> None:
+        self.rooms = rooms
 
 class Guest:
     reservations = []
@@ -41,11 +51,7 @@ class Guest:
             data += f"Pokoj nr: {i['room']}   {i['from']}    {i['to']}\nDo zaplaty: {i['price']} zł\n"
         return data
 
-list_of_rooms = [
-    Room(1, 100, 1, 0, []),
-    Room(2, 200, 2, 0, []),
-    Room(3, 300, 3, 0, [])
-    ]
+
 
 list_of_guests = [Guest("Jan Kowalski"), Guest("Anna Kowalska"), Guest("Joanna Bielecka")] 
 
