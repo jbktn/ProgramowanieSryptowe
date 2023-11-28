@@ -1,0 +1,7 @@
+
+        "Maciej", "Musiał",
+        Reservation(Room(1, 0, 0, 300), datetime.datetime(2000, 1, 1), datetime.datetime(2000, 1, 2)))
+        "Tomasz", "Kot",
+        Reservation(Room(2, 0, 1, 150), datetime.datetime(2000, 1, 1), datetime.datetime(2000, 1, 5)))
+        "Katarzyna", "Szlak",
+        Reservation(Room(3, 0, 2, 100), datetime.datetime(2000, 1, 1), datetime.datetime(2000, 1, 10)))

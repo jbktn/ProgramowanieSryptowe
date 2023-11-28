@@ -1,4 +1,39 @@
 import datetime
+import json
+import sys
+import logging
+logging.basicConfig(filename='log.txt', level=logging.DEBUG)
+logging.info('Started')
+
+class User:
+    def __init__(self, name):
+        self.name = name
+        self.groups = ""
+        if self.name == "admin":
+            self.group = "admin"
+        else:
+            self.group = "user"
+
+def user(group):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            if group == user.group or user.group == "admin":
+                return func(*args, **kwargs)
+            else:
+                raise AccessError("Access denied")
+        return wrapper
+    return decorator
+
+def log_to(file):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            logging.info(f'{datetime.datetime.now()} user: {user.name} wywolal funkcje {func.__name__} klasy {func.__class__}')
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator
+
+class AccessError(Exception):
+    pass
 
 class Room:
     def __init__(self, number: int, max: int, cena: int) -> None:
@@ -6,17 +41,21 @@ class Room:
         self.cena = cena
         self.max = max
 
-    def current(self, numer):
+    def current(self, number):
         exit = 0
         for guest, reservations in hotel.guests.items():
             for reservation in reservations:
-                if reservation.room is Room and reservation.room.number == self.number:
+                if reservation.room is Room and reservation.room.number == number:
                     exit += 1
         return exit
 
+    @user("michal")        
+    @log_to("log.txt")
     def __repr__ (self):
-        return f"Numer: {self.number} Ilosc miejsc: {self.max} Ilosc miejsc zajętych: {self.current(self.number)} Cena: {self.cena} "
+        return f"Numer: {self.number} Ilosc miejsc: {self.max} Ilosc miejsc zajętych: {self.current(self.number)} Cena: {self.cena}\n"
 
+    @user("michal")        
+    @log_to("log.txt")
     def __str__(self):
         return f"Numer: {self.number} Ilosc miejsc: {self.max} Ilosc miejsc zajętych: {self.current(self.number)} Cena: {self.cena} "
 
@@ -59,11 +98,15 @@ class Guest:
         return self.name == other.name and self.surname == other.surname
 
 class Reservation:
-    def __init__(self, room, check_inDate, check_outDate):
-        self.room = room
+    def __init__(self, number, check_inDate, check_outDate):
+        for room in Hotel.rooms:
+            if room.number == int(number):
+                self.room = room
         self.check_inDate: datetime.date = check_inDate
         self.check_outDate: datetime.date = check_outDate
 
+    @user("michal")        
+    @log_to("log.txt")
     def __repr__(self):
         cena = int((self.check_outDate - self.check_inDate).days * self.room.cena)
         if self.room.__class__.__name__ == "Room":          
@@ -72,6 +115,8 @@ class Reservation:
             cena = cena * 24
             return f"ConferenceRoom: {self.room.number} {self.check_inDate} {self.check_outDate} Do zaplaty: {cena} zł\n"
 
+    @user("michal")        
+    @log_to("log.txt")
     def __str__(self):
         cena = int((self.check_outDate - self.check_inDate).days * self.room.cena)
         if self.room.__class__.__name__ == "Room":
@@ -85,6 +130,10 @@ class Hotel:
     ConferenceRooms = []
     def __init__(self) -> None:
         self.guests: [Guest, list[Reservation]] = {}
+        with open(file_name, "r") as file:
+            data = json.load(file)
+            for element in data:
+                self.rooms.append(Room(element["number"], element["limit"], element["price"]))
 
     def book(self, id, number, name, surname, arrival, departure):
         is_room = False
@@ -127,7 +176,18 @@ class Hotel:
     
     def add_reservation(self, name, surname, reservation):
         guest = Guest(name, surname)
-        self.rooms.append(reservation.room)
+        for room in self.rooms:
+            if room.number == int(reservation.room.number):
+                if guest in self.guests:
+                    self.guests[guest].append(reservation)
+                    return
+                else:
+                    self.guests[Guest(name, surname)] = [reservation]
+                    return
+        print("Room not known")
+        max = input("Insert room guest limit: ")
+        cena = input("Inser room price per day: ")
+        self.rooms.append(Room(reservation.room, 0, cena, max))
         if guest in self.guests:
             self.guests[guest].append(reservation)
         else:
@@ -139,7 +199,7 @@ class Hotel:
                 print(room)
         for guest, reservations in self.guests.items():
             for reservation in reservations:
-                if reservation.room.number == number:
+                if reservation.room == number:
                     print(guest)
                     print(reservation)
 
@@ -175,16 +235,19 @@ class Hotel:
             print(f"Gość: {guest.imie} {guest.nazwisko}, Nr pokoju: {reservation.room.numer}, Data: {reservation.check_inDate} - {reservation.check_outDate}")
 
 if __name__ == "__main__":
+    file_name = sys.argv[1]
+    user = User(sys.argv[2])
+
     hotel = Hotel()
     hotel.add_reservation(
         "Maciej", "Musiał",
-        Reservation(Room(1, 0, 300), datetime.datetime(2000, 1, 1), datetime.datetime(2000, 1, 2)))
+        Reservation(1, datetime.datetime(2000, 1, 1), datetime.datetime(2000, 1, 2)))
     hotel.add_reservation(
         "Tomasz", "Kot",
-        Reservation(Room(2, 1, 150), datetime.datetime(2000, 1, 1), datetime.datetime(2000, 1, 5)))
+        Reservation(2, datetime.datetime(2000, 1, 1), datetime.datetime(2000, 1, 5)))
     hotel.add_reservation(
         "Katarzyna", "Szlak",
-        Reservation(Room(3, 2, 100), datetime.datetime(2000, 1, 1), datetime.datetime(2000, 1, 10)))
+        Reservation(3, datetime.datetime(2000, 1, 1), datetime.datetime(2000, 1, 10)))
 
     while True:
         try:
@@ -199,8 +262,6 @@ if __name__ == "__main__":
                     print(hotel.ConferenceRooms)
                 elif commands[0] == "ConferenceRoom":
                     hotel.print_ConferenceRoom(int(commands[1]))
-                elif commands[0] == "test":
-                    print(hotel.guests)
                 elif commands[0] == "guests":
                     for guest in hotel.guests.keys():
                         print(guest)
