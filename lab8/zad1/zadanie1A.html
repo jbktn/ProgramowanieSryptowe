@@ -1,0 +1,21 @@
+<html>
+    <head>
+        <script src="zadanie1.js"></script> 
+    </head>
+  <body>
+    <div>Treść dokumentu HTML przed skryptem</div>
+    <script>       
+        executeCodeFourTimes();       
+    </script>
+    <div>Treść dokumentu HTML po skrypcie</div>
+    <form oninput="wynik.value = parseInt(pole_tekstowe.value) + parseInt(pole_liczbowe.value)">
+        <input id="pole_tekstowe" type="text" placeholder="Wprowadź tekst">
+        +
+        <input id="pole_liczbowe" type="number" placeholder="Wprowadź liczbę">    
+        =
+        <output name="wynik" for="pole_tekstowe pole_liczbowe">Tu pojawi się wynik obliczeń</output>    
+        <br>    
+        <input type="button" value="Wypisz" onclick="funkcja_zwrotna()">
+      </form>
+  </body>
+</html>
