@@ -7,35 +7,38 @@
   <body>
     <main>
       <h1>Płótno</h1>
-      <canvas id="canvas" width="500" height="500" style="border:1px solid #000000;">
+      <canvas id="canvas" width="50" height="50" style="border:1px solid #000000;">
         Wygląda na to, że twoja przeglądarka nie obsługuje elementu "canvas" 
       </canvas>
       <script>
-            "use strict";
-            var canvas = document.getElementById('canvas');
-            var ctx = canvas.getContext('2d');
+        "use strict";
+        var canvas = document.getElementById('canvas');
+        var ctx = canvas.getContext('2d');
 
-            ctx.translate(canvas.width / 2, canvas.height / 2);
-            ctx.rotate((45 * Math.PI) / 180);
-            ctx.translate(-canvas.width / 2, -canvas.height / 2);
+        canvas.style.marginTop = -canvas.height / 2 + 'px';
+        canvas.style.marginLeft = -canvas.width / 2 + 'px';
 
-            ctx.beginPath();
-            ctx.arc(150, 150, 80, 0, 2 * Math.PI);
-            ctx.lineWidth = 10;
-            ctx.strokeStyle = "#233143";
-            ctx.closePath();
-            ctx.stroke();
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        ctx.rotate((45 * Math.PI) / 180);
+        ctx.translate(-canvas.width / 2, -canvas.height / 2);
 
-            ctx.beginPath();
-            ctx.arc(150, 150, 80, 0, 1/2 * Math.PI);
-            ctx.lineTo(100, 100);
-            ctx.lineWidth = 10;
-            ctx.strokeStyle = "#233143";
-            ctx.closePath();
-            ctx.stroke();
-            ctx.fillStyle = "#466286";
-            ctx.fill();
-        </script>
+        ctx.beginPath();
+        ctx.arc(25, 25, 20, 0, 2 * Math.PI);
+        ctx.lineWidth = 5; // Adjusted line width
+        ctx.strokeStyle = "#233143";
+        ctx.closePath();
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(25, 25, 20, 0, 1/2 * Math.PI);
+        ctx.lineTo(15, 15);
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = "#233143";
+        ctx.closePath();
+        ctx.stroke();
+        ctx.fillStyle = "#466286";
+        ctx.fill();
+      </script>
     </main>
   </body>
 </html>
