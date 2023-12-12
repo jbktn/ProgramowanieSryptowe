@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Tytuł strony</title>
+</head>
+<body>
+    
+    <header id="header">
+        <!-- Page title -->
+        <!-- Background color: #EFF -->
+        <!-- Border color: #A8A8A8 -->
+
+        <h1>Tytuł strony</h1>
+    </header>
+
+    <div>
+        <button type="button" id="setButton">Set</button>
+        <button type="button" id="deleteButton">Delete</button>
+        <button type="button" id="addButton">Add</button>
+    </div>
+
+  <aside id="aside">
+    <h1>Panel boczny</h1>
+
+    <h2>Ciekawe odsyłacze</h2>
+
+    <ul>
+      <li>
+        <a href="">Odsyłacz 1</a>
+      </li>
+
+      <li>
+        <a href="">Odsyłacz 2</a>
+      </li>
+
+      <li>
+        <a href="">Odsyłacz 3</a>
+      </li>
+    </ul>
+  </aside>
+
+  <nav id="nav">
+    <!--Tutaj menu nawigacyjne / Here the navigation menu -->
+    <!-- left & right margin: 25px -->
+
+    <ul>
+      <li>
+        <a href="">Element 1</a>
+      </li>
+
+      <li>
+        <a href="">Element 2</a>
+      </li>
+    </ul>
+  </nav>
+  <!-- Tutaj treść panelu bocznego / Here the content of the side panel-->
+
+  
+
+  <main id="main">
+    <!--Tutaj treść strony / Here the content of the page -->
+    <h1>Treść strony</h1>
+  </main>
+
+  <footer id="footer">
+    <!-- Tutaj treść stopki / Here the content of the footer -->
+    <a href="mailto:your.email.address">Imię Nazwisko</a>
+  </footer>
+
+  <script>
+    const text = [
+      "Natenczas Wojski chwycił na taśmie przypięty<br>" +
+      "Swój róg bawoli, długi, cętkowany, kręty<br>" +
+      "Jak wąż boa, oburącz do ust go przycisnął<br>" +
+      "Wzdął policzki jak banię, w oczach krwią zabłysnął<br>" +
+      "Zasunął wpół powieki, wciągnął w głąb pół brzucha<br>" +
+      "I do płuc wysłał z niego cały zapas ducha<br>" +
+      "I zagrał: róg jak wicher, wirowatym dechem<br>" +
+      "Niesie w puszczę muzykę i podwaja echem.",
+      
+      "Umilkli strzelcy, stali szczwacze zadziwieni<br>" +
+      "Mocą, czystością, dziwną harmoniją pieni.<br>" +
+      "Starzec cały kunszt, którym niegdyś w lasach słynął<br>" +
+      "Jeszcze raz przed uszami myśliwców rozwinął;<br>" +
+      "Napełnił wnet, ożywił knieje i dąbrowy,<br>" +
+      "Jakby psiarnię w nie wpuścił i rozpoczął łowy.<br>",
+      
+      "Bo w graniu była łowów historyja krótka:<br>" +
+      "Zrazu odzew dźwięczący, rześki: to pobudka;<br>" +
+      "Potem jęki po jękach skomlą: to psów granie;<br>" +
+      "A gdzieniegdzie ton twardszy jak grzmot: to strzelanie."
+    ];
+    function Azure(element) {
+      element.style.backgroundColor = '#EFF';
+      element.style.borderColor = '#A8A8A8';
+      element.style.borderStyle = 'solid';
+      element.style.boxShadow = '5px 5px 10px rgba(0.25, 0.25, 0.25, 0.25)';
+    }
+    setStyles = () => {
+      const header = document.querySelector('header');
+      const nav = document.querySelector('nav');
+      const aside = document.getElementById('aside');
+      const footer = document.getElementById('footer');
+      const main = document.getElementById('main');
+
+      Azure(header);
+      Azure(nav);
+      Azure(aside);
+      Azure(main);
+      Azure(footer);
+
+      aside.style.width = '40%';
+      aside.style.float = 'right';
+      aside.style.position = 'relative';
+      aside.style.paddingLeft = '1rem';
+      aside.style.marginTop = '10px';
+
+      footer.style.position = 'fixed';
+      footer.style.bottom = '0';
+      footer.style.left = '0';
+      footer.style.width = '99%';
+      footer.style.fontSize = '1.5rem';
+      footer.style.paddingLeft = '8px';
+
+      header.style.paddingLeft = '1rem';
+      header.style.fontSize = '1.25rem';
+      
+      main.style.paddingLeft = '1rem';
+      main.style.marginTop = '10px';
+      main.style.width = '27.5rem';
+
+      nav.style.width = '8rem';
+      nav.style.paddingLeft = '1rem';
+      nav.style.marginTop = '10px';
+      nav.style.marginRight = '25px';
+    }
+
+    deleteStyles = () => {
+      const elementsToReset = document.querySelectorAll('header, nav, aside, footer, main');
+      elementsToReset.forEach(element => element.removeAttribute('style'));
+    }
+
+    function add() {
+      if (text.length > 0) {
+        const paragraph = document.createElement('p');
+        paragraph.innerHTML = text.shift();
+        main.appendChild(paragraph);
+      } else {
+        document.getElementById('addButton').disabled = true;
+      }
+    }
+
+    document.getElementById('setButton').addEventListener('click', setStyles) 
+    document.getElementById('deleteButton').addEventListener('click', deleteStyles)
+    document.getElementById('addButton').addEventListener('click', add)
+  </script>
+</body>
+</html>
