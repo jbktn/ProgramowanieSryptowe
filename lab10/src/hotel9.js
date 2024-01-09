@@ -72,7 +72,7 @@ fetch('/public/reservations')
     .catch(err => console.trace(err));
 
           
-
+// eslint-disable-next-line
 const hotel = (commands) => {
     commands = commands.split(" ");
     
