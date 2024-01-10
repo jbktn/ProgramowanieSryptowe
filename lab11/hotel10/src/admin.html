@@ -49,7 +49,9 @@
             </script>
             <a class="text-decoration-none text-dark position-fixed mt-1 ml-2">Agroturystyka "Olszyny"</a>
         </div>   
-        
+        <div>
+            <button class="btn btn-outline-dark text-dark bg-light" onclick="unlog()">Wyloguj</button>
+        </div>
     </div>
 </div>
 
@@ -70,8 +72,6 @@
         <button id="addroom" class=" border-dark bg-dark rounded text-light pl-4 pr-4 mt-2">ADD room</button>
       </div>     
 </div>
-
-<div id="rooms" class="hidden"></div>
 
 <style>
     .hidden {
@@ -130,7 +130,7 @@
     }
 
 </style>
-<script src='hotel10.js'></script>
+<script src='admin.js'></script>
 <script>
     addEventListener('load', function () {
         var command_console = document.getElementById('command_console');

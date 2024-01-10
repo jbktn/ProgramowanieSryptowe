@@ -107,18 +107,6 @@
     </div>
 </div>
 
-<div class="mt-5 pt-5">     
-      <form class="d-flex justify-content-center">
-            <input id="command_console" type="text" placeholder="Wprowadź komendę" class="border-dark rounded-left background-custom pl-2 pr-2">  
-            <input id="submit" type="submit" value="Wykonaj" class="border-dark bg-dark rounded-right text-light pl-2 pr-2">
-      </form>
-      <div class="d-flex justify-content-center mt-2">
-            <button class="border-dark bg-dark rounded-left text-light pl-4 pr-4 mr-1" onclick="guests()">Guests</button>
-            <button class="border-dark bg-dark text-light pl-4 pr-4" onclick='get_guest()'>Guest</button>
-            <button class="border-dark bg-dark rounded-right text-light pl-4 pr-4 ml-1" onclick="hotel_print()">Hotel</button>
-      </div>
-</div>
-
 <div class="row mt-5 pt-5">
     <div class="col-md-4"></div>
     <div class="col-md-4 skew-panel">
@@ -244,13 +232,13 @@
         margin-bottom: 10rem;
     }
     .room_image {
-        width: 25rem;
-        height: 15rem;
+        width: 20rem;
+        height: 12.5rem;
         border-top-right-radius: 8px;
         border-top-left-radius: 8px;
     }
     .btn-room {
-        width: 25rem;
+        width: 20rem;
         background-color: #a9cc8e;
         color: white;
         border-color: #a9cc8e;
@@ -259,7 +247,7 @@
         border-bottom-left-radius: 8px;
     }
     .btn-room-full {
-        width: 25rem;
+        width: 20rem;
         background-color: #cdd4d7;
         color: white;
         border-color: #cdd4d7;
@@ -275,17 +263,6 @@
 </style>
 <script src='hotel10.js'></script>
 <script>
-    addEventListener('load', function () {
-        var command_console = document.getElementById('command_console');
-        var submit = document.getElementById('submit');
-        submit.addEventListener('click', function (e) {
-            e.preventDefault();
-            var command = command_console.value;
-            command_console.value = '';
-            hotel(command);
-        });
-    });
-
     addEventListener('load', function () {
         const id = document.getElementById('id');
         const passwd = document.getElementById('passwd');

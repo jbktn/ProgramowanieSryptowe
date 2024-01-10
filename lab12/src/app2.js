@@ -5,6 +5,7 @@
 import express from 'express';
 import morgan from 'morgan';
 import { encodeXML } from 'entities';
+import cors from 'cors';
 
 const app1 = express();
 const app2 = express();
@@ -14,6 +15,21 @@ app1.locals.pretty = app1.get('env') === 'development';
 /* ************************************************ */
 app2.use(morgan('dev'));
 app2.use(express.urlencoded({ extended: false }));
+let allowedOrigins = ['http://localhost:8001'];
+app2.use(cors({
+    origin: function(origin, callback){
+      // allow requests with no origin 
+      // (like mobile apps or curl requests)
+      if(!origin) return callback(null, true);
+      if(allowedOrigins.indexOf(origin) === -1){
+        var msg = 'The CORS policy for this site does not ' +
+                  'allow access from the specified Origin.';
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
+    credentials: true
+}));
 /* ************************************************ */
 app1.get('/', function (request, response) {
     response.render('index');

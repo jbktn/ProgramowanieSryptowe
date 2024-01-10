@@ -20,6 +20,37 @@ html(lang='en')
                 color: white;
             }
         script.
+            /************/
+            async function getTime(europe_city) {
+                return new Promise(async (resolve, reject) => {
+                    try {
+                        const response = await fetch(`http://worldtimeapi.org/api/timezone/Europe/${europe_city}`);
+
+                        if (response.status === 200) {
+                            const data = await response.json();
+                            resolve(data);
+                        } else if (response.status === 404) {
+                            const error = await response.text();
+                            reject(error);
+                        }
+                    } catch (error) {
+                        console.log(error)
+                        reject(error);
+                    }
+                });
+            }
+            async function displayTime() {
+                const europe_city = document.getElementById('city').value;
+                console.log(europe_city)
+                try {
+                    let data = await getTime(europe_city);
+                    console.log(data);
+                    data =  data.datetime.split('T')[1].split('.')[0];
+                    document.getElementById('result').textContent = JSON.stringify(data);
+                } catch (error) {
+                    document.getElementById('result').textContent = error;
+                }
+            }
             /**************************************************************************************/
             /* Function that retrieves the content of one of the selected text fields of the form */
             /**************************************************************************************/
@@ -27,7 +58,14 @@ html(lang='en')
                 let name = '';
 
                 // TODO: Here put the code that, depending on the value of the 'http_method' variable — GET / POST — assigns the 'name' variable to the value of the 'name_GET' / 'name_POST' form field
-                
+                switch(http_method){
+                    case 'GET':
+                        name = document.getElementById('name_GET').value;
+                        break;
+                    case 'POST':
+                        name = document.getElementById('name_POST').value;
+                        break;
+                }
                 return name;
             }
             
@@ -56,7 +94,16 @@ html(lang='en')
                         console.log(xhr.response);
                         console.groupEnd();
                         if(show_alert)
-                            window.alert(xhr.response);
+                            switch(response_type){
+                                case 'json':
+                                    window.alert(JSON.stringify(xhr.response));
+                                    break;
+                                case 'document':
+                                    window.alert(xhr.responseXML.documentElement.firstChild.data);
+                                    break;
+                                default:
+                                    window.alert(xhr.response);
+                            }
                         else { 
                             results.set(`ajax ${http_method} ${response_type}`, xhr.response);
                             dispatchEvent(received); 
@@ -74,7 +121,14 @@ html(lang='en')
                 //--------------------------------------------------------------------------
                 xhr.responseType = response_type;  // Type of data received by the 'load' observer
                 xhr.withCredentials = true; // Do not modify or remove
-                xhr.open(http_method, 'http://localhost:8000/submit', true);
+                switch(http_method){
+                    case 'GET':
+                        xhr.open('GET', `http://localhost:8000/submit?name=${encodeURIComponent(name)}`, true);
+                        break;
+                    case 'POST':
+                        xhr.open('POST', `http://localhost:8000/submit?name=${encodeURIComponent(name)}`, true);
+                        break;
+                }
 
                 //****************************************************************************************
                 // What is the acceptable data type - the server part should return data of the given type
@@ -88,8 +142,7 @@ html(lang='en')
                         xhr.setRequestHeader('Accept', 'application/xml');
                         break;
                 }  
-                
-                xhr.send(null);
+                xhr.send(null)
             }
 
             /**************************************************************************************/
@@ -99,7 +152,7 @@ html(lang='en')
             /* response_type ∈ ["text", "json", "xml"]                                            */ 
             /* name - Contents of the form's text box - data that needs to be sent asynchronously */
             /**************************************************************************************/
-            function requestFetchAPI(http_method, response_type, name, show_alert=false) {
+            async function requestFetchAPI(http_method, response_type, name, show_alert=false) {
                 let accept = '*/*';
 
                 switch(response_type){
@@ -110,20 +163,31 @@ html(lang='en')
                         accept = 'application/xml';
                         break;
                 }
+
                 //--------------------------------------------------------------------------
                 // Configuration and execution of the (asynchronous) query to the web server
                 //--------------------------------------------------------------------------
-                fetch('http://localhost:8000/submit', {
-                    method: http_method,
-                    credentials: "include", // Do not modify or remove
-                    headers: {
-                        //****************************************************************************************
-                        // What is the acceptable data type—the server part should return data of the given type
-                        //****************************************************************************************
-                        Accept: accept
-                    }
-                }) // a promise is created
-                .then(function (response) { // if the promise is fulfilled
+                if (http_method === 'GET') {
+                    var get_params = `?name=${encodeURIComponent(name)}`;
+                }
+                else {
+                    var get_params = '';
+                }
+                try {
+                    const response = await fetch(`http://localhost:8000/submit${get_params}`, {
+                        method: http_method,
+                        credentials: "include", // Do not modify or remove
+                        headers: {
+                            //****************************************************************************************
+                            // What is the acceptable data type—the server part should return data of the given type
+                            //****************************************************************************************
+                            Accept: accept,
+                            'Content-Type': 'application/x-www-form-urlencoded'
+
+                        },
+                        body : http_method === 'GET' ? null : `name=${encodeURIComponent(name)}`
+                    }); // a promise is created
+                
                     if (!response.ok)
                         throw Error(response.statusText);
 
@@ -142,15 +206,26 @@ html(lang='en')
                     console.log(result);
                     console.groupEnd();   
                     if(show_alert)
-                        window.alert(result);  
+                        result.then((data) => {
+                            switch(response_type){
+                                case 'json':
+                                    window.alert(JSON.stringify(data));
+                                    break;
+                                case 'xml':
+                                    window.alert(decodeHtml(data));
+                                    break;
+                                default:
+                                    window.alert(data);
+                            }
+                        })
+
                     else {
                         results.set(`fetch ${http_method} ${response_type}`, result);
                         dispatchEvent(received);
                     }
-                })
-                .catch(function (error) { // if the promise is rejected
-                    window.alert(error);
-                });
+                } catch (error) {
+                    console.error(error);
+                }
             }
         script(src="https://unpkg.com/mocha/mocha.js") 
         script(type="module").
@@ -161,6 +236,10 @@ html(lang='en')
             mocha.setup('bdd');
             mocha.checkLeaks(); 
         main
+            form(onsubmit='displayTime(); return false;')
+                input(type='text', id='city', name='city')
+                button(type='submit') Get Time
+            div#result
             table
                 tr
                     th  
