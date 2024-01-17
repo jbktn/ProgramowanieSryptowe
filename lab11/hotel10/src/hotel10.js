@@ -1,10 +1,10 @@
 const login = (id, passwd) => {
-    const params = new URLSearchParams({ login: id, password: passwd });
-    fetch(`http://localhost:8000/login?${params}`, {
-        method: 'GET',
+    fetch(`http://localhost:8000/login`, {
+        method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
+        body: JSON.stringify({ login: id, password: passwd })
     })
     .then(response => response.json())
     .then(data => {

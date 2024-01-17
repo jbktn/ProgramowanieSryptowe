@@ -72,7 +72,7 @@ const hotel = (commands) => {
         case 'delete':
             fetch('http://localhost:8000/admin/delete', 
             {
-                method: 'POST'              
+                method: 'DELETE'             
             })
             .then(res => res.json())
             .then(data => { console.log(data); })

@@ -2,14 +2,27 @@ const express = require('express');
 const fs = require('fs').promises;
 const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
-
 const guestRouter = express.Router();
 const adminRouter = express.Router();
+const { rateLimit } = require('express-rate-limit');
+
+const limiter = rateLimit({
+	windowMs: 15 * 60 * 1000, // 15 minutes
+	limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+	standardHeaders: 'draft-7', // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
+	legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
+	// store: ... , // Use an external store for consistency across multiple server instances.
+})
 
 const app = express();
+app.disable('x-powered-by');
 const port = 8000;
 
 app.use(bodyParser.json());
+app.use(limiter)
+
+app.use(cookieParser())
+const csrfProtection = csrf({ cookie: true })
 
 guestRouter.get('/src/hotel10.html', (req, res) => {
     res.sendFile('/src/hotel10.html', { root: __dirname });
@@ -17,30 +30,6 @@ guestRouter.get('/src/hotel10.html', (req, res) => {
 
 guestRouter.get('/src/hotel10.js', (req, res) => {
     res.sendFile('/src/hotel10.js', { root: __dirname });
-});
-
-guestRouter.get('/login', async (req, res) => {
-    console.log('GET');
-    
-    const USERlogin = req.query.login; 
-    const USERpassword = req.query.password;
-
-    console.log(USERlogin);
-    console.log(USERpassword);
-
-    try {
-        const data = JSON.parse(await fs.readFile('./hotel10/public/passwd.json', 'utf8'));
-        const user = data.find(user => user.id === USERlogin);
-        console.log(user);
-        if (user && user.password === USERpassword) {
-            res.json({ status: 'OK' });
-        } else {
-            res.json({ status: 'ERROR' });
-        }
-    } catch (err) {
-        console.trace(err);
-        res.status(500).send('Server error');
-    }
 });
 
 guestRouter.get('/rooms', async (req, res) => {
@@ -76,7 +65,7 @@ guestRouter.get('/public/images/2.jpg', (req, res) => {
     res.sendFile('/public/images/2.jpg', { root: __dirname });
 });
 
-guestRouter.get('/public/images/3.jpg', (req, res) => {
+guestRouter.get('/public/images/3.jpg', (req, res) => {)
     res.sendFile('/public/images/3.jpg', { root: __dirname });
 });
 
@@ -87,8 +76,14 @@ guestRouter.post('/book', async (req, res) => {
         const body = req.body;
         console.log(body);
 
-        const reservation = {number: body.number, guest: `${body.name} ${body.surname}`, arrival: body.arrival, departure: body.departure, price: body.price};
-        console.log('1 POST:', reservation);
+        const number = parseInt(body.number);
+        const name = String(body.name);
+        const surname = String(body.surname);
+        const arrival = String(body.arrival);
+        const departure = String(body.departure);
+        const price = parseInt(body.price);
+
+        const reservation = {number: number, guest: `${name} ${surname}`, arrival: arrival, departure: departure, price: price};
 
         const client = new MongoClient('mongodb://127.0.0.1:27017');
         await client.connect();
@@ -99,8 +94,8 @@ guestRouter.post('/book', async (req, res) => {
         const reservationsDB = db.collection('reservations');
 
         await roomsDB.updateOne(
-            { number: body.number },
-            { $push: { guests: `${body.name} ${body.surname}`} }
+            { number: number },
+            { $push: { guests: `${name} ${surname}`} }
         )
 
         await reservationsDB.insertOne(reservation, (insertErr, result) => {
@@ -115,6 +110,29 @@ guestRouter.post('/book', async (req, res) => {
     } catch (err) {
         console.trace(err);
         console.error('Error handling POST request:', err);
+        res.status(500).send('Server error');
+    }
+});
+
+guestRouter.post('/login', async (req, res) => {
+    const body = req.body;
+    const USERlogin = String(body.login); 
+    const USERpassword = String(body.password);
+
+    console.log(USERlogin);
+    console.log(USERpassword);
+
+    try {
+        const data = JSON.parse(await fs.readFile('./hotel10/public/passwd.json', 'utf8'));
+        const user = data.find(user => user.id === USERlogin);
+        console.log(user);
+        if (user && user.password === USERpassword) {
+            res.json({ status: 'OK' });
+        } else {
+            res.json({ status: 'ERROR' });
+        }
+    } catch (err) {
+        console.trace(err);
         res.status(500).send('Server error');
     }
 });
@@ -175,7 +193,14 @@ adminRouter.post('/book', async (req, res) => {
         const body = req.body;
         console.log(body);
 
-        const reservation = {number: body.number, guest: `${body.name} ${body.surname}`, arrival: body.arrival, departure: body.departure, price: body.price};
+        const number = parseInt(body.number);
+        const name = String(body.name);
+        const surname = String(body.surname);
+        const arrival = String(body.arrival);
+        const departure = String(body.departure);
+        const price = parseInt(body.price);
+
+        const reservation = {number: number, guest: `${name} ${surname}`, arrival: arrival, departure: departure, price: price};
         console.log('1 POST:', reservation);
 
         const client = new MongoClient('mongodb://127.0.0.1:27017');
@@ -187,8 +212,8 @@ adminRouter.post('/book', async (req, res) => {
         const reservationsDB = db.collection('reservations');
 
         await roomsDB.updateOne(
-            { number: body.number },
-            { $push: { guests: `${body.name} ${body.surname}`} }
+            { number: number },
+            { $push: { guests: `${name} ${surname}`} }
         )
 
         await reservationsDB.insertOne(reservation, (insertErr, result) => {
@@ -207,7 +232,7 @@ adminRouter.post('/book', async (req, res) => {
     }
 });
 
-adminRouter.post('/delete', async (req, res) => {
+adminRouter.delete('/delete', async (req, res) => {
     console.log('POST');
 
     try {
@@ -250,9 +275,13 @@ adminRouter.post('/delete', async (req, res) => {
 adminRouter.post('/addroom', async (req, res) => {
     const body = req.body;
     console.log(body);
+
+    const number = parseInt(body.number);
+    const limit = parseInt(body.limit);
+    const price = parseInt(body.price);
     
     if (body.number && body.limit && body.price) {
-        const room = {number: parseInt(body.number), limit: parseInt(body.limit), price: parseInt(body.price), guests: []};
+        const room = {number: number, limit: limit, price: price, guests: []};
         try {
             const client = new MongoClient('mongodb://127.0.0.1:27017');
             await client.connect();

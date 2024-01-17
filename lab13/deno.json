@@ -1,0 +1,9 @@
+{
+  "tasks": {
+    "dev": "deno run --watch main.ts",
+    "express": "deno check app1.ts & deno run --watch --allow-read --allow-env --allow-net app1.ts",
+    "ksiega": "deno check ksiega.ts & deno run --watch --allow-read --allow-env --allow-net ksiega.ts",
+    "app2": "deno run --watch --allow-read --allow-env --allow-net app2.ts",
+    "ksiega2": "deno run --watch --allow-read --allow-env --allow-net ksiega2.ts"
+  }
+}
